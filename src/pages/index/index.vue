@@ -88,6 +88,7 @@ export default {
       swiperCars: [],
       cars: [],
       loadStatus: "more", // 加载状态
+      params: {}, // 参数对象
     };
   },
   onLoad() {
@@ -95,7 +96,8 @@ export default {
   },
   methods: {
     async getCars() {
-      const res = await query(1, 20);
+      this.params = { page: 1, pageSize: 20 };
+      const res = await query(this.params.page, this.params.pageSize);
       // 返回值是个数组，第一个参数是错误对象，第二个是返回的数据
       if (res[0]) {
         // 不为空，弹出一个 toast
@@ -131,9 +133,31 @@ export default {
     },
     /**
     加载更多 */
-    loadMore() {
-      console.log("加载更多");
+    async loadMore() {
+      this.total = 40;
+      if (this.total <= this.cars.length) {
+        // 数量已经够了，没有更多了
+         this.loadStatus='noMore';
+        return;
+      }
       this.loadStatus = "loading";
+      // 往后一页
+      this.params.page++;
+      const res = await query(this.params.page, this.params.pageSize);
+      // 返回值是个数组，第一个参数是错误对象，第二个是返回的数据
+      if (res[0]) {
+        // 不为空，弹出一个 toast
+        uni.showToast({
+          title: "请求汽车失败",
+          icon: "none",
+        });
+        this.params.page--;
+        this.loadStatus = "more";
+        return;
+      }
+      // 全部汽车
+      this.cars.push(...res[1].data.table);
+      this.loadStatus = "more";
     },
   },
 };

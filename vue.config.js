@@ -12,7 +12,7 @@ module.exports = {
         port: 8080, // 开发服务器运行端口号
         proxy: {
             '/api': {
-                target: 'http://localhost:3000/api', // 代理接口地址
+                target: 'http://192.168.1.3:3000/api', // 代理接口地址
                 secure: false, // 如果是https接口，需要配置这个参数
                 changeOrigin: true, // 是否跨域
                 pathRewrite: {
