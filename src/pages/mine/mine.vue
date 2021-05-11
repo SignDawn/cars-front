@@ -53,12 +53,13 @@
           @change="changeLocation"
         >
           <!-- @nodeclick="onnodeclick" -->
-          <view class="info ">
+          <view class="info">
             <text>地区</text> <text> {{ locationStr }}</text>
           </view>
         </uni-data-picker>
       </view>
       <view class="buttons">
+        <button @click="myStars">我的收藏</button>
         <button @click="changePassword">修改密码</button>
         <button @click="cancelLogin">退出登陆</button>
       </view>
@@ -214,6 +215,9 @@ export default {
         title: data.message,
         icon: "none",
       });
+    },
+    myStars() {
+      uni.navigateTo({ url: "/pages/stars/stars" });
     },
   },
 };

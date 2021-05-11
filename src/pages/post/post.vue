@@ -1,19 +1,25 @@
 <template>
-	<view>
-		论坛页面
-	</view>
+  <view class="post">
+    <!-- <view v-for=""></view> -->
+  </view>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-
-			};
-		}
-	}
+import { getPosts } from "../../network/postApi";
+export default {
+  data() {
+    return {};
+  },
+  methods: {
+    async getPost() {
+      const res = await getPosts();
+	  
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-
+.post {
+}
 </style>

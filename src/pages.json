@@ -13,7 +13,7 @@
     {
       "path": "pages/post/post",
       "style": {
-        "navigationBarTitleText": "",
+        "navigationBarTitleText": "论坛",
         "enablePullDownRefresh": false
       }
     },
@@ -55,6 +55,20 @@
       "path": "pages/detail/detail",
       "style": {
         "navigationBarTitleText": "详情",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/stars/stars",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/comment/comment",
+      "style": {
+        "navigationBarTitleText": "评论",
         "enablePullDownRefresh": false
       }
     }
