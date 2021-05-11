@@ -22,3 +22,9 @@ export function query(page, pageSize, carName) {
         url: `${BASE_URL}/car/query?page=${page}&pageSize=${pageSize}`
     })
 }
+
+export function queryOne(detailId) {
+    return uni.request({
+        url: `${BASE_URL}/car/one?detailId=${detailId}`
+    });
+}

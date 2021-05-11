@@ -1,10 +1,10 @@
 <template>
-  <view class="login">
+  <view class="register">
     <view class="avater">C</view>
     <!-- 标题 -->
-    <text class="title">Sign in to Cars</text>
-    <!-- 登陆区域 -->
-    <view class="login-area">
+    <text class="title">Sign up to Cars</text>
+    <!-- 注册区域 -->
+    <view class="register-area">
       <uni-forms
         ref="form"
         :value="formData"
@@ -28,24 +28,33 @@
             placeholder="密码"
           />
         </uni-forms-item>
-        <button @click="login">登陆</button>
+        <uni-forms-item
+          label="password again"
+          name="passwordAgain"
+          :label-width="150"
+        >
+          <uni-easyinput
+            class="input"
+            v-model="formData.passwordAgain"
+            type="password"
+            placeholder="确认密码"
+          />
+        </uni-forms-item>
+        <button @click="register">注册</button>
       </uni-forms>
     </view>
-    <!-- 注册 -->
-    <text class="tips">
-      如果没有账号，可以进行<text @click="register" class="register">注册</text>
-    </text>
   </view>
 </template>
 
 <script>
-import { login as loginApi } from "../../network/loginApi";
+import { register as registerApi } from "../../network/registerApi";
 export default {
   data() {
     return {
       formData: {
         username: "", // 用户名
         password: "", // 密码
+        passwordAgain: "",
       },
       rules: {
         username: {
@@ -54,11 +63,6 @@ export default {
               required: true,
               errorMessage: "请输入用户名",
             },
-            // {
-            //   minLength: 3,
-            //   maxLength: 5,
-            //   errorMessage: "姓名长度在 {minLength} 到 {maxLength} 个字符",
-            // },
           ],
         },
         password: {
@@ -69,20 +73,34 @@ export default {
             },
           ],
         },
+        passwordAgain: {
+          rules: [
+            {
+              required: true,
+              errorMessage: "请输入确认密码",
+            },
+            {
+              validateFunction: (rule, value, data, callback) => {
+                if (value === this.formData.password) {
+                  return true;
+                }
+                return false;
+              },
+              errorMessage: "确认密码与密码不一致",
+            },
+          ],
+        },
       },
     };
   },
-  onBackPress() {
-    //   回到首页
-    uni.reLaunch({ url: "/pages/index/index" });
-    return true; // 不执行默认的行为
-  },
   methods: {
-    login() {
+    register() {
       this.$refs.form
         .submit()
         .then(async (formData) => {
-          const res = await loginApi(formData.username, formData.password);
+          // 走注册接口
+          console.log(formData);
+          const res = await registerApi(formData.username, formData.password);
           if (res[0]) {
             // 不为空，弹出一个 toast
             uni.showToast({
@@ -99,7 +117,7 @@ export default {
             });
             return;
           }
-          // 登陆成功，跳转我的页面
+          // 注册成功，默认也走了登录，直接存到 vuex
           this.$store.commit("user/loginUser", data.data);
           uni.showToast({
             title: "注册成功",
@@ -115,22 +133,19 @@ export default {
           });
         });
     },
-    register() {
-      // 跳转到注册页面
-      uni.navigateTo({ url: "/pages/register/register" });
-    },
   },
 };
 </script>
 
-<style lang="scss" scoped>
-.login {
+<style lang="scss">
+.register {
   display: flex;
   flex-direction: column;
   align-items: center;
 
   .avater {
     margin-top: 50rpx;
+    $avater-width-height: 100rpx;
     width: $avater-width-height;
     height: $avater-width-height;
     background-color: $uni-color-primary;
@@ -149,7 +164,7 @@ export default {
     letter-spacing: -0.5px;
   }
 
-  .login-area {
+  .register-area {
     margin-top: 32rpx;
     padding: 40rpx;
     background-color: #f6f8fa;
@@ -163,16 +178,6 @@ export default {
       width: 200rpx;
       background-color: $uni-color-primary;
       color: white;
-    }
-  }
-
-  .tips {
-    font-size: 26rpx;
-    margin-top: 20rpx;
-
-    .register {
-      color: blue;
-      padding: 0 10rpx;
     }
   }
 }

@@ -6,6 +6,7 @@ const user = {
     getters: {
         // 存在就说明已经登陆
         isLoggedIn: (state) => !!state.userInfo.username,
+        userInfo: (state) => state.userInfo,
     },
     mutations: {
         loginUser(state, userInfo) {

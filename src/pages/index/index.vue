@@ -8,9 +8,14 @@
     <view class="top_search">
       <text>C</text>
       <!-- 输入框 -->
-      <input disabled placeholder="法拉利" />
+      <input placeholder="法拉利" v-model="searchValue" />
       <!-- 图标 -->
-      <uni-icons type="search" :size="22" class="icon"></uni-icons>
+      <uni-icons
+        type="search"
+        :size="22"
+        class="icon"
+        @click="searchCar"
+      ></uni-icons>
     </view>
     <!-- 轮播图 -->
     <swiper class="swiper" indicator-dots autoplay circular>
@@ -22,7 +27,15 @@
     <view class="content">
       <view class="title">汽车</view>
       <uni-list :border="false" class="list">
-        <uni-list-item
+        <template v-for="(car, index) in cars">
+          <car-item
+            :key="index"
+            :car="car"
+            :carIndex="index"
+            @updateCar="updateCar"
+          ></car-item>
+        </template>
+        <!-- <uni-list-item
           v-for="(car, index) in cars"
           :key="index"
           direction="column"
@@ -70,7 +83,7 @@
               </view>
             </view>
           </template>
-        </uni-list-item>
+        </uni-list-item> -->
         <uni-load-more
           :status="loadStatus"
           @clickLoadMore="loadMore"
@@ -82,13 +95,19 @@
 
 <script>
 import { query } from "../../network/homeApi";
+import CarItem from "../../components/services/CarItem.vue";
 export default {
+  components: {
+    "car-item": CarItem,
+  },
   data() {
     return {
       swiperCars: [],
       cars: [],
       loadStatus: "more", // 加载状态
       params: {}, // 参数对象
+      searchValue: "", // 搜索值
+      total: 0, // 总数
     };
   },
   onLoad() {
@@ -118,26 +137,22 @@ export default {
       });
     },
     /**
-     * 传入 car 主要是为了修改值后，样式改变
-     */
-    displayMore(index) {
-      this.cars[index].displayMore = !this.cars[index].displayMore;
-      // vue 监听机制存在问题，下面操作为了刷新页面
-      this.cars = [].concat(this.cars);
-    },
-    /**
      * 查看具体的车辆，需要跳转
      */
     seeDetailCar(detailCar) {
       console.log(detailCar);
     },
+    updateCar(index) {
+      // vue 监听机制存在问题，下面操作为了刷新页面
+      this.cars[index] = Object.assign({}, this.cars[index]);
+      this.cars = [].concat(this.cars);
+    },
     /**
     加载更多 */
     async loadMore() {
-      this.total = 40;
       if (this.total <= this.cars.length) {
         // 数量已经够了，没有更多了
-         this.loadStatus='noMore';
+        this.loadStatus = "noMore";
         return;
       }
       this.loadStatus = "loading";
@@ -158,6 +173,10 @@ export default {
       // 全部汽车
       this.cars.push(...res[1].data.table);
       this.loadStatus = "more";
+    },
+    searchCar() {
+      // 跳转新页，新页面中去加载对应数据
+      uni.navigateTo({ url: `/pages/search/search?q=${this.searchValue}` });
     },
   },
 };
@@ -219,58 +238,6 @@ export default {
     }
 
     .list {
-      .item {
-        display: flex;
-        image {
-          width: 240rpx;
-          height: 160rpx;
-        }
-        .infos {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-
-          margin-left: 20rpx;
-
-          .title {
-            color: $uni-color-primary;
-          }
-
-          .info {
-            margin-top: 10rpx;
-            display: flex;
-            flex-wrap: wrap;
-            .infoItem {
-              margin-right: 10rpx;
-              font-size: 16rpx;
-              display: flex;
-            }
-          }
-        }
-      }
-
-      .more {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        .detail {
-          width: 100%;
-          font-size: 16rpx;
-
-          .detailCar {
-            padding: 10rpx 20rpx;
-            margin-top: 15rpx;
-            border: 2rpx solid #e8e8e8;
-            display: flex;
-            justify-content: space-between;
-
-            .price {
-              color: $uni-color-primary;
-            }
-          }
-        }
-      }
     }
   }
 }
