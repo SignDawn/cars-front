@@ -15,3 +15,14 @@ export function getPosts(theme) {
         url: `${BASE_URL}/post/query?pageSize=100`
     })
 }
+
+export function createPost(theme) {
+    return uni.request({
+        url: `${BASE_URL}/post/create`,
+        method: 'POST',
+        data: {
+            theme,
+            content: '  '
+        }
+    })
+}
